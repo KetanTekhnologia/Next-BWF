@@ -1,30 +1,33 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:final_bwf/module/utils/app_colors.dart';
+import 'package:final_bwf/module/widgets/common_button.dart';
+import 'package:final_bwf/module/widgets/text_fields.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import '../databasehelper/add_patient_vital.dart';
 import '../utils/string_constants.dart';
 
-class AddPatientVital extends StatefulWidget {
+class AddVitalTwo extends StatefulWidget {
   final String? patient_vital_id;
   final int doctor_id;
   final String? name;
-  const AddPatientVital(
+  const AddVitalTwo(
       {super.key, this.patient_vital_id, required this.doctor_id, this.name});
 
   @override
-  State<AddPatientVital> createState() => _AddPatientVitalState();
+  State<AddVitalTwo> createState() => _AddVitalTwoState();
 }
 
-class _AddPatientVitalState extends State<AddPatientVital> {
+class _AddVitalTwoState extends State<AddVitalTwo> {
   final TextEditingController _doctorIdController = TextEditingController();
   final TextEditingController _bloodPressureController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _pulseRateController = TextEditingController();
   final TextEditingController _respiratoryRateController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _bloodOxygenController = TextEditingController();
   final TextEditingController _heightController = TextEditingController();
   final TextEditingController _weightController = TextEditingController();
@@ -63,7 +66,7 @@ class _AddPatientVitalState extends State<AddPatientVital> {
       });
     } else {
       _bmiController.text =
-          ''; // Clear BMI value if height or weight is invalid
+      ''; // Clear BMI value if height or weight is invalid
       setState(() {
         _bmiStatus = ''; // Clear BMI status
       });
@@ -150,76 +153,117 @@ class _AddPatientVitalState extends State<AddPatientVital> {
           ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          children: [
-            TextFormField(
-              controller: _doctorIdController,
-              enabled: false,
-              decoration: InputDecoration(labelText: 'Doctor Name '),
-            ),
-            TextFormField(
-              controller: _bloodPressureController,
-              keyboardType: TextInputType.phone,
-              decoration: InputDecoration(labelText: 'Blood Pressure (BP)'),
-            ),
-            TextFormField(
-              controller: _pulseRateController,
-              keyboardType: TextInputType.phone,
-              decoration: InputDecoration(labelText: 'Pulse Rate (PR)'),
-            ),
-            TextFormField(
-              controller: _respiratoryRateController,
-              keyboardType: TextInputType.phone,
-              decoration: InputDecoration(labelText: 'Respiratory Rate (RR)'),
-            ),
-            TextFormField(
-              controller: _bloodOxygenController,
-              keyboardType: TextInputType.phone,
-              decoration: InputDecoration(labelText: 'Blood Oxygen(SpO2)'),
-            ),
-            TextFormField(
-              controller: _heightController,
-              decoration: InputDecoration(labelText: 'Height (cm)'),
-              keyboardType: TextInputType.number,
-              onChanged: (_) => calculateBMI(),
-            ),
-            TextFormField(
-              controller: _weightController,
-              decoration: InputDecoration(labelText: 'Weight (kg)'),
-              keyboardType: TextInputType.number,
-              onChanged: (_) => calculateBMI(),
-            ),
-            TextFormField(
-              controller: _bmiController,
-              decoration: InputDecoration(labelText: 'BMI'),
-              readOnly: true,
-            ),
-            SizedBox(height: 8),
-            Text(
-              'BMI Status: $_bmiStatus',
-              style: TextStyle(fontSize: 16, color: Colors.blueAccent),
-            ),
-            SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ElevatedButton(
-                onPressed: submitForm,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(
-                      0xffBFF6F7), // Set the background color of the button
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 17,horizontal: 20),
+          child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: CustomTextField(
+                    controller: _doctorIdController,
+                    contentPadding: EdgeInsets.only(left: 18),
+                    hintText: "Doctor Name",
+                    hintTextColor: Colors.black.withOpacity(0.8),
+                    fillColor: ColorsForApp.backgroundTextField,
+                    filled: true,
+                    enabled: false,
+                  ),
                 ),
-                child: Text(
-                  'Submit',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.black),
+                Padding(
+                  padding: const EdgeInsets.only(top: 22),
+                  child: CustomTextField(
+                    controller: _bloodPressureController,
+                    contentPadding: EdgeInsets.only(left: 18),
+                    hintText: "Blood Pressure (BP)",
+                    hintTextColor: Colors.black.withOpacity(0.8),
+                    fillColor: ColorsForApp.backgroundTextField,
+                    filled: true,
+                  ),
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 22),
+                  child: CustomTextField(
+                    controller: _pulseRateController,
+                    contentPadding: EdgeInsets.only(left: 18),
+                    hintText: "Pulse Rate (PR)",
+                    hintTextColor: Colors.black.withOpacity(0.8),
+                    fillColor: ColorsForApp.backgroundTextField,
+                    filled: true,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 22),
+                  child: CustomTextField(
+                    controller: _respiratoryRateController,
+                    contentPadding: EdgeInsets.only(left: 18),
+                    hintText: "Respiratory Rate (RR)",
+                    hintTextColor: Colors.black.withOpacity(0.8),
+                    fillColor: ColorsForApp.backgroundTextField,
+                    filled: true,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 22),
+                  child: CustomTextField(
+                    controller: _bloodOxygenController,
+                    contentPadding: EdgeInsets.only(left: 18),
+                    hintText: "Blood Oxygen (Sp02)",
+                    hintTextColor: Colors.black.withOpacity(0.8),
+                    fillColor: ColorsForApp.backgroundTextField,
+                    filled: true,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 22),
+                  child: CustomTextField(
+                    controller: _heightController,
+                    contentPadding: EdgeInsets.only(left: 18),
+                    hintText: "Height (cm)",
+                    hintTextColor: Colors.black.withOpacity(0.8),
+                    fillColor: ColorsForApp.backgroundTextField,
+                    filled: true,
+                    onChange:(_) => calculateBMI(),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 22),
+                  child: CustomTextField(
+                    controller: _weightController,
+                    contentPadding: EdgeInsets.only(left: 18),
+                    hintText: "Weight (kg)",
+                    hintTextColor: Colors.black.withOpacity(0.8),
+                    fillColor: ColorsForApp.backgroundTextField,
+                    filled: true,
+                    onChange:(_) => calculateBMI(),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 22),
+                  child: CustomTextField(
+                    controller: _bmiController,
+                    contentPadding: EdgeInsets.only(left: 18),
+                    hintText: "BMI",
+                    hintTextColor: Colors.black.withOpacity(0.8),
+                    fillColor: ColorsForApp.backgroundTextField,
+                    filled: true,
+                    readOnly: true,
+                  ),
+                ),
+                SizedBox(height: 9,),
+                Row(
+                  children: [
+                    Text("BMI Status:",style: TextStyle(color: Colors.blue,fontSize: 17,fontWeight: FontWeight.w700),),
+                  ],
+                ),
+                SizedBox(height: 22,),
+                CommonButton(onpressed: (){
+                  submitForm();
+                })
+              ],
             ),
-          ],
         ),
-      ),
+      )
     );
   }
 
@@ -229,13 +273,13 @@ class _AddPatientVitalState extends State<AddPatientVital> {
     if (connectivityResult != ConnectivityResult.none) {
       // Retrieve unsynced patients from the local database
       final unsyncedPatients =
-          await DatabaseHelperVital.retrievePatientsVital();
+      await DatabaseHelperVital.retrievePatientsVital();
       bool allvitalsSuccess = true;
       // Send each unsynced patient data to the server
       for (final vitals in unsyncedPatients) {
         print(unsyncedPatients);
         final success =
-            await _sendVitalsDataToServer(vitals, doctorId, context);
+        await _sendVitalsDataToServer(vitals, doctorId, context);
         print(success);
         if (success) {
           print(success);
@@ -257,7 +301,6 @@ class _AddPatientVitalState extends State<AddPatientVital> {
   static Future<bool> _sendVitalsDataToServer(
       Map<String, dynamic> vital, int doctorId, BuildContext context) async {
     final baseUrl = '${Api.url}api/addVitals';
-
     try {
       print(vital["patient_uuid"]);
       String patientID = vital["patient_uuid"];

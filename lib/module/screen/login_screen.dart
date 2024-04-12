@@ -92,7 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 return "Please Enter Username";
                               }
                               return null;
-                            },
+                            }, hintTextstyle: TextStyle(),
                           ),
                         ),
                         SizedBox(height: 5.h),
@@ -127,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 return "Please Enter Password";
                               }
                               return null;
-                            },
+                            }, hintTextstyle: TextStyle(),
                           ),
                         ),
                         SizedBox(height: 1.h),

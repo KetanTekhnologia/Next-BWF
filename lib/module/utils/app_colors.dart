@@ -15,4 +15,14 @@ class ColorsForApp {
   static Color yellowColor = Colors.amber;
   static Color greyColor = Colors.grey;
   static Color headingPageColor = const Color(0xff126DD8);
+  static Color appbarBackgroundColor = const Color(0xffEEEEEE);
+  static Color textColor1 = const Color(0xffffffff);
+  static Color textColor2 = const Color(0xff000000);
+  static Color patientPrescprionBackgroundColor = const Color(0xff7DBAF9);
+  static Color textfieldBackgroundColor = const Color(0xffF7F7F7);
+  static Color buttonColor =const Color(0xff489CF8);
+  static Color backgroundTextField =Color(0xffF7F7F7);
+  static Color blue =const Color(0xffB5DDFB);
+  static Color square =const Color(0xffC1C1C1);
+  static Color Circle =const Color(0xffDDDDDD);
 }

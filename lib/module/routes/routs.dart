@@ -6,7 +6,7 @@ class AppRouts
   static String ADD_PATIENT_ROUTE = "/add_patient_route";
   static String ADD_PRESCRPTION_ONE_ROUTE = "/add_prescription_one_route";
   static String ADD_PRESCRIPTION_TWO_ROUTE = "/add_prescription_two_route";
-  static String ADD_VITAL_ROUTE = "/add_vital_route";
+  static String ADD_PATIENT_VITAL_ROUTE = "/add_patient_vital_route";
   static String HOME_ROUTE = "/home_route";
   static String MY_PROFILE_ROUTE = "/my_profile_route";
   static String PATIENT_DETAILS_ROUTE = "/patient_details_route";
@@ -14,5 +14,6 @@ class AppRouts
   static String PRESCRIPTION_DETAILS_ROUTE = "/prescription_details_route";
   static String UPDATE_PATIENT_ROUTE = "/update_patient_route";
   static String VIEW_VITALS_ROUTE = "/view_vitals_route";
-  static String PATIENT_REGISTERATION_ROUTE = "/patient_registeration_route";
+  static String REGISTERATION_PATIENT_ROUTE = "/registeration_patient_route";
+  static String ADD_VITAL_TWO_ROUTE = "/add_vital_two_route";
 }

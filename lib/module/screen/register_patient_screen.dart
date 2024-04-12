@@ -1,23 +1,24 @@
 import 'dart:convert';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:final_bwf/module/widgets/common_button.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:uuid/uuid.dart';
-
 import '../databasehelper/add_patient.dart';
+import '../utils/app_colors.dart';
 import '../utils/string_constants.dart';
+import '../widgets/date_picker.dart';
+import '../widgets/text_fields.dart';
+import 'add_prescription_one_screen.dart';
+import 'package:http/http.dart'as http;
 
-
-class PatientRegistrationScreen extends StatefulWidget {
+class RegisterPatientScreen extends StatefulWidget {
   final String? name;
   final int doctor_id;
-
-  const PatientRegistrationScreen(
-      {super.key, required this.name, required this.doctor_id});
+   RegisterPatientScreen({super.key, this.name, required this.doctor_id});
 
   static Future<void> syncDataWithServer() async {
     final connectivityResult = await Connectivity().checkConnectivity();
@@ -55,7 +56,6 @@ class PatientRegistrationScreen extends StatefulWidget {
       // No network connection, you may choose to handle this case differently
     }
   }
-
   static Future<bool> sendDataToServer(Map<String, dynamic> patient) async {
     final baseUrl = '${Api.url}api/register-patient';
     final uuid = patient['uuid'];
@@ -112,16 +112,17 @@ class PatientRegistrationScreen extends StatefulWidget {
   }
 
   @override
-  State<PatientRegistrationScreen> createState() => _PatientRegistrationScreenState();
+  State<RegisterPatientScreen> createState() => _RegisterPatientScreenState();
 }
 
-class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
+
+class _RegisterPatientScreenState extends State<RegisterPatientScreen> {
   TextEditingController _nameController = TextEditingController();
   TextEditingController _ageController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _addressController = TextEditingController();
   TextEditingController _phoneNumberController = TextEditingController();
-  TextEditingController _sexController = TextEditingController();
+  TextEditingController _genderController = TextEditingController();
   TextEditingController _bloodGroupController = TextEditingController();
   TextEditingController _birthdateController = TextEditingController();
   TextEditingController _doctorNameController = TextEditingController();
@@ -132,8 +133,8 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _cityController = TextEditingController();
   TextEditingController _villageController = TextEditingController();
-  // Add controllers for other fields
-  @override
+
+
   void initState() {
     super.initState();
     _doctorNameController.text = widget.name ?? '';
@@ -159,92 +160,11 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
         _birthdateController.text = picked
             .toLocal()
             .toString()
-            .split(' ')[0]; // Format to display only date
+            .split(' ')[0];
       });
   }
 
-  // final cities = [
-  //   {"cityID": "3", "cityName": "Sakegaon"},
-  //   {"cityID": "4", "cityName": "Malegaon"},
-  //   {"cityID": "5", "cityName": "Babhulgaon"},
-  //   {"cityID": "6", "cityName": "Sudamwadi"},
-  //   {"cityID": "7", "cityName": "Hajipurwadi"},
-  //   {"cityID": "8", "cityName": "Nalegaon"},
-  //   {"cityID": "9", "cityName": "Achalgaon"},
-  //   {"cityID": "10", "cityName": "Wawifi"},
-  //   {"cityID": "11", "cityName": "Kavitkheda"},
-  //   {"cityID": "12", "cityName": "Rahegaon"},
-  //   {"cityID": "13", "cityName": "Bhayegaon"},
-  //   {"cityID": "14", "cityName": "Undirwadi"},
-  //   {"cityID": "15", "cityName": "Biloni"},
-  //   {"cityID": "16", "cityName": "Wadji"},
-  //   {"cityID": "17", "cityName": "Parala"},
-  //   {"cityID": "18", "cityName": "Wakla"},
-  //   {"cityID": "19", "cityName": "Talwada"},
-  //   {"cityID": "20", "cityName": "Gangapur"},
-  //   {"cityID": "21", "cityName": "Nimgaon"},
-  //   {"cityID": "22", "cityName": "Kharaj"},
-  //   {"cityID": "23", "cityName": "Pendephal"},
-  //   {"cityID": "24", "cityName": "Ragunathpurwadi"},
-  //   {"cityID": "25", "cityName": "Hajipurwadi"},
-  //   {"cityID": "26", "cityName": "Talyachiwadi"},
-  //   {"cityID": "27", "cityName": "Shekhapuri"},
-  //   {"cityID": "28", "cityName": "Palaswadi"},
-  //   {"cityID": "29", "cityName": "Aakhadwada tanda"},
-  //   {"cityID": "30", "cityName": "Chincholi"},
-  //   {"cityID": "31", "cityName": "Nirdudi"},
-  //   {"cityID": "32", "cityName": "Lamangaon"},
-  //   {"cityID": "33", "cityName": "Mhaishmal"},
-  //   {"cityID": "34", "cityName": "Bhadji"},
-  //   {"cityID": "35", "cityName": "Mamnapur"},
-  //   {"cityID": "36", "cityName": "Sonkheda"},@@@@@
-  //   {"cityID": "37", "cityName": "Loni"},
-  //   {"cityID": "38", "cityName": "Gandheshwar"},
-  //   {"cityID": "39", "cityName": "Bodkha"},
-  //   {"cityID": "40", "cityName": "Mawsala"},
-  //   {"cityID": "41", "cityName": "Salukheda"},
-  //   {"cityID": "42", "cityName": "Khirdi"},
-  //   {"cityID": "43", "cityName": "Dhamangaon"},
-  //   {"cityID": "44", "cityName": "Tisggaon"},
-  //   {"cityID": "45", "cityName": "Viramgaon"},
-  //   {"cityID": "46", "cityName": "Matargaon"},
-  //   {"cityID": "47", "cityName": "Devwifia"},
-  //   {"cityID": "48", "cityName": "Zari"},
-  //   {"cityID": "49", "cityName": "Wadgaon"},
-  //   {"cityID": "50", "cityName": "Padali"},
-  //   {"cityID": "51", "cityName": "Dhule"},
-  //   {"cityID": "52", "cityName": "Nagpur"},
-  //   {"cityID": "53", "cityName": "Nashik"}
-  // ];
   String? _selectedCity;
-  // Future<List<String>> _fetchCityNames() async {
-  //   var connectivityResult = await (Connectivity().checkConnectivity());
-  //   bool isNetworkAvailable = connectivityResult == ConnectivityResult.mobile ||
-  //       connectivityResult == ConnectivityResult.wifi;
-  //
-  //   if (isNetworkAvailable) {
-  //     final apiUrl = '${Api.url_wifi_con}getCities';
-  //     final response = await http.get(Uri.parse(apiUrl));
-  //
-  //     if (response.statusCode == 200) {
-  //       final Map<String, dynamic> responseData = jsonDecode(response.body);
-  //       if (responseData['status'] == true) {
-  //         final List<dynamic> mmuNamesData = responseData['cities'];
-  //         return mmuNamesData
-  //             .map((item) => item['cityName'] as String)
-  //             .toList();
-  //       } else {
-  //         throw Exception('Failed to fetch cityName ');
-  //       }
-  //     } else {
-  //       throw Exception('Failed to load cityName ');
-  //     }
-  //   } else {
-  //     final List<String> CityList =
-  //         cities.map((item) => item['cityName'] as String).toList();
-  //     return CityList;
-  //   }
-  // }
 
   late Future<List<String>> _cityListFuture;
 
@@ -285,10 +205,10 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
 
   Widget _buildCityropdown() {
     return FutureBuilder<List<String>>(
-      future: _cityListFuture, // Pass the city name
+      future: _cityListFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator(); // Show loading indicator
+          return CircularProgressIndicator();
         } else if (snapshot.hasError) {
           return Text('No Network ');
         } else {
@@ -315,7 +235,6 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
   }
 
   String dob = '';
-
   void convertToDOB(int age) {
     DateTime now = DateTime.now();
     DateTime dobDate = DateTime(now.year - age, now.month, now.day);
@@ -327,296 +246,344 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Patients',
-          style: TextStyle(
-            fontSize: 20,
-            color: Colors.cyan,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Add Patient',
-              style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
-            ),
-            TextField(
-              controller: _nameController,
-              keyboardType: TextInputType.text,
-              decoration:
-              InputDecoration(labelText: 'Name', errorText: nameError),
-              onChanged: (value) {
-                setState(() {
-                  nameError = !isValidName(value)
-                      ? 'Name must contains only alphabets'
-                      : null;
-                });
-              },
-            ),
-            TextField(
-              controller: _ageController,
-              keyboardType: TextInputType.number,
-              inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.digitsOnly
-              ],
-              decoration: InputDecoration(labelText: 'Age'),
-              onChanged: (value) {
-                int age = int.tryParse(_ageController.text) ?? 0;
-                if (age > 0) {
-                  convertToDOB(age);
-                } else {
-                  setState(() {
-                    dob = 'Invalid age';
-                  });
-                }
-              },
-            ),
-            TextField(
-              controller: _emailController,
-              decoration:
-              InputDecoration(labelText: 'Email', errorText: emailError),
-              keyboardType: TextInputType.emailAddress,
-              onChanged: (value) {
-                setState(() {
-                  emailError = !isValidEmail(value) ? 'Invalid email ' : null;
-                });
-              },
-            ),
-            TextField(
-              controller: _passwordController,
-              decoration: InputDecoration(
-                  labelText: 'Password', errorText: passwordError),
-              keyboardType: TextInputType.visiblePassword,
-              onChanged: (value) {
-                setState(() {
-                  passwordError = !isValidPassword(value)
-                      ? 'Password must contain atleast,\n 1) 8 characters long,\n 2) 1 special character,\n 3) 1 digit. \n 4) 1 capital character'
-                      : null;
-                });
-              },
-            ),
-            TextField(
-              controller: _phoneNumberController,
-              decoration: InputDecoration(
-                  labelText: 'Phone Number', errorText: phoneNumberError),
-              keyboardType: TextInputType.phone,
-              inputFormatters: [
-                LengthLimitingTextInputFormatter(10),
-                FilteringTextInputFormatter.digitsOnly
-              ],
-              onChanged: (value) {
-                setState(() {
-                  phoneNumberError = !isValidPhoneNumber(value)
-                      ? 'Invalid phone number '
-                      : null;
-                });
-              },
-            ),
-            TextField(
-              controller: _addressController,
-              decoration: const InputDecoration(labelText: 'Address'),
-            ),
-
-            // TextField(
-            //   controller: _villageController,
-            //   decoration: const InputDecoration(labelText: 'Village'),
-            // ),
-            // TextField(
-            //   controller: _cityController,
-            //   decoration: const InputDecoration(labelText: 'City'),
-            //   onChanged: (value) {
-            //     setState(() {
-            //       cityError =
-            //           !isCityNotEmpty(value) ? 'City Cannot be Empty ' : null;
-            //     });
-            //   },
-            // ),
-            _buildCityropdown(),
-            DropdownButtonFormField<String>(
-                value: _sexController.text.isNotEmpty &&
-                    ['Male', 'Female'].contains(_sexController.text)
-                    ? _sexController.text
-                    : 'Select',
-                decoration: const InputDecoration(labelText: 'Gender'),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _sexController.text = newValue!;
-                  });
-                },
-                items: <String>['Select', 'Male', 'Female', 'Other']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList()),
-            DropdownButtonFormField<String>(
-              value: _bloodGroupController.text.isNotEmpty &&
-                  [
-                    'Select',
-                    'A+',
-                    'A-',
-                    'B+',
-                    'B-',
-                    'AB+',
-                    'AB-',
-                    'O+',
-                    'O-'
-                  ].contains(_bloodGroupController.text)
-                  ? _bloodGroupController.text
-                  : 'Select',
-              decoration: const InputDecoration(labelText: 'Blood Group'),
-              onChanged: (String? newValue) {
-                setState(() {
-                  _bloodGroupController.text = newValue!;
-                });
-              },
-              items: <String>[
-                'Select',
-                'A+',
-                'A-',
-                'B+',
-                'B-',
-                'AB+',
-                'AB-',
-                'O+',
-                'O-'
-              ].map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
-
-            TextField(
-              controller: _birthdateController,
-              readOnly: true,
-              decoration: InputDecoration(
-                // labelText: '$dob',
-                  labelText: "Date",
-                  suffixIcon: GestureDetector(
-                    onTap: () {
-                      _selectDate(context);
-                    },
-                    child: Icon(Icons.calendar_month),
-                  )),
-            ),
-            TextField(
-              controller: _doctorNameController,
-              enabled: false,
-              decoration: const InputDecoration(labelText: 'Doctor Name'),
-            ),
-            TextField(
-              controller: _adharNumberController,
-              decoration: InputDecoration(
-                  labelText: 'Adhar Number', errorText: adharNumberError),
-              keyboardType: TextInputType.phone,
-              inputFormatters: [
-                LengthLimitingTextInputFormatter(12),
-                FilteringTextInputFormatter.digitsOnly
-              ],
-              onChanged: (value) {
-                setState(() {
-                  adharNumberError = !isValidAadharNumber(value)
-                      ? 'Invalid Aadhar number format'
-                      : null;
-                });
-              },
-            ),
-
-            TextField(
-              controller: _abhaNumberController,
-              decoration: InputDecoration(
-                  labelText: 'Abha Number', errorText: abhaNumberError),
-              keyboardType: TextInputType.phone,
-              inputFormatters: [
-                LengthLimitingTextInputFormatter(14),
-                FilteringTextInputFormatter.digitsOnly
-              ],
-              onChanged: (value) {
-                setState(() {
-                  abhaNumberError = !isValidAbhaNumber(value)
-                      ? 'Invalid Abha number format'
-                      : null;
-                });
-              },
-            ),
-
-            DropdownButtonFormField<String>(
-              value: _insuranceController.text.isNotEmpty &&
-                  ['Select', 'YES', 'NO']
-                      .contains(_insuranceController.text)
-                  ? _insuranceController.text
-                  : 'Select',
-              decoration: const InputDecoration(labelText: 'Insurance'),
-              onChanged: (String? newValue) {
-                setState(() {
-                  _insuranceController.text = newValue!;
-                });
-              },
-              items: <String>['Select', 'YES', 'NO']
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
-
-            // Add fields for other data
-            SizedBox(height: 20),
-            Container(
-              width: double.infinity,
-              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              child: ElevatedButton(
-                onPressed: _addPatient,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(
-                      0xffBFF6F7), // Set the background color of the button
-                ),
-                child: Text(
-                  'Add Patient',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.black),
-                ),
-              ),
-            ),
+        appBar: AppBar(
+          backgroundColor: Color(0xffF7F7F7),
+          leading: const Icon(Icons.arrow_back),
+          title: const Text("Patient Details"),
+          actions: const [
+            Padding(
+              padding: EdgeInsets.only(right: 30),
+              child: Icon(Icons.search),
+            )
           ],
         ),
-      ),
-    );
-  }
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 17, horizontal: 20),
+            child: Column(
+              children: [
+                CustomTextField(
+                    controller: _nameController,
+                    hintText: "Name",
+                    hintTextColor: Colors.black.withOpacity(0.8),
+                    filled: true,
+                    fillColor: ColorsForApp.backgroundTextField,
+                    contentPadding: EdgeInsets.only(left: 18),
+                    validator: (value){
+                      if(value!.isEmpty)
+                        {
+                          return "Name must contains only alphabets";
+                        }
+                    },
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 19),
+                  child: CustomTextField(
+                      controller: _ageController,
+                      hintText: "Age",
+                      hintTextColor: Colors.black.withOpacity(0.8),
+                      filled: true,
+                      fillColor: ColorsForApp.backgroundTextField,
+                      contentPadding: EdgeInsets.only(left: 18),
+                      validator: (value) {
+                        int age = int.tryParse(_ageController.text) ?? 0;
+                        if (age > 0) {
+                          convertToDOB(age);
+                        } else {
+                          setState(() {
+                            dob = 'Invalid age';
+                          });
+                        }
+                      },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 19),
+                  child: CustomTextField(
+                      controller: _emailController,
+                      hintText: "Email",
+                      hintTextColor: Colors.black.withOpacity(0.8),
+                      filled: true,
+                      fillColor: ColorsForApp.backgroundTextField,
+                      contentPadding: EdgeInsets.only(left: 18),
+                      validator: (value) {
+                        setState(() {
+                          emailError = !isValidEmail(value!) ? 'Invalid email ' : null;
+                        });
+                      },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 19),
+                  child: CustomTextField(
+                      controller: _passwordController,
+                      hintText: "Password",
+                      hintTextColor: Colors.black.withOpacity(0.8),
+                      filled: true,
+                      fillColor: ColorsForApp.backgroundTextField,
+                      contentPadding: EdgeInsets.only(left: 18),
+                      validator: (value) {
+                        setState(() {
+                          passwordError = !isValidPassword(value!)
+                              ? 'Password must contain atleast,\n 1) 8 characters long,\n 2) 1 special character,\n 3) 1 digit. \n 4) 1 capital character'
+                              : null;
+                        });
+                      }
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 22),
+                  child: CustomTextField(
+                      controller: _phoneNumberController,
+                      hintText: "Phone Number",
+                      hintTextColor: Colors.black.withOpacity(0.8),
+                      filled: true,
+                      fillColor: ColorsForApp.backgroundTextField,
+                      contentPadding: EdgeInsets.only(left: 18),
+                      validator: (value) {
+                        setState(() {
+                          phoneNumberError = !isValidPhoneNumber(value!)
+                              ? 'Invalid phone number '
+                              : null;
+                        });
+                      },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 19),
+                  child: CustomTextField(
+                      controller: _addressController,
+                      hintText: "Address",
+                      hintTextColor: Colors.black.withOpacity(0.8),
+                      filled: true,
+                      fillColor: ColorsForApp.backgroundTextField,
+                      contentPadding: EdgeInsets.only(left: 18),
+                      validator: (value){
+                        if(value!.isEmpty)
+                          {
+                            return "Please Enter Address";
+                          }
+                     },
+                  ),
+                ),
 
-  // void _onSavePressed() async {
-  //   // Call the syncDataWithServer() method from DatabaseHelper
-  //   await DatabaseHelper.syncDataWithServer();
-  // }
-  // bool isValidAadharNumber(String aadharNumber) {
-  //   RegExp aadharRegex = RegExp(r'^[0-9]{12}$');
-  //   return aadharRegex.hasMatch(aadharNumber);
-  // }
-  //
 
-  bool isValidName(String name) {
-    RegExp nameRegex = RegExp(r'^[a-zA-Z\s]+$');
-    if (!nameRegex.hasMatch(_nameController.text) ||
-        !_nameController.text.isNotEmpty) {
-      return false;
-    } else {
-      return true;
-    }
-  }
+                _buildCityropdown(),
 
-  bool isValidAbhaNumber(String abhaNumber) {
-    RegExp abhaRegex = RegExp(r'^[0-9]{14}$');
-    return abhaRegex.hasMatch(abhaNumber);
+
+                Padding(
+                  padding: const EdgeInsets.only(top: 19),
+                  child: CustomTextField(
+                    controller: _addressController,
+                    hintText: "Gender",
+                    hintTextColor: Colors.black.withOpacity(0.8),
+                    filled: true,
+                    fillColor: ColorsForApp.backgroundTextField,
+                    contentPadding: EdgeInsets.only(left: 18),
+                    validator: (value){
+                      if(value!.isEmpty)
+                      {
+                        return "Please Enter Gender";
+                      }
+                    },
+                    suffixIcon: DropdownButton<String>(
+                        value: _genderController.text.isNotEmpty &&
+                            ['Male', 'Female'].contains(_genderController.text)
+                            ? _genderController.text
+                            : 'Select',
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _genderController.text = newValue!;
+                          });
+                        },
+                        items: <String>['Select', 'Male', 'Female', 'Other']
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList()
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 19),
+                  child: CustomTextField(
+                    controller: _addressController,
+                    hintText: "Blood Group",
+                    hintTextColor: Colors.black.withOpacity(0.8),
+                    filled: true,
+                    fillColor: ColorsForApp.backgroundTextField,
+                    contentPadding: EdgeInsets.only(left: 18),
+                    validator: (value){
+                      if(value!.isEmpty)
+                      {
+                        return "Please Enter Blood Group";
+                      }
+                    },
+                    suffixIcon: DropdownButton<String>(
+                        value: _bloodGroupController.text.isNotEmpty &&
+                            [
+                              'Select',
+                              'A+',
+                              'A-',
+                              'B+',
+                              'B-',
+                              'AB+',
+                              'AB-',
+                              'O+',
+                              'O-'
+                            ].contains(_bloodGroupController.text)
+                            ? _bloodGroupController.text
+                            : 'Select',
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _bloodGroupController.text = newValue!;
+                          });
+                        },
+                      items: <String>[
+                        'Select',
+                        'A+',
+                        'A-',
+                        'B+',
+                        'B-',
+                        'AB+',
+                        'AB-',
+                        'O+',
+                        'O-'
+                      ].map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 19, right: 10),
+                        child: CustomTextField(
+                          controller: _birthdateController,
+                          hintText: "DOB",
+                          readOnly: true,
+                          hintTextColor: Colors.black.withOpacity(0.8),
+                          filled: true,
+                          fillColor: ColorsForApp.backgroundTextField,
+                          contentPadding: EdgeInsets.only(left: 18),
+                          suffixIcon: GestureDetector(
+                            onTap: (){
+                              _selectDate(context);
+                            },
+                              child: Icon(Icons.calendar_month_sharp),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 19),
+                  child: CustomTextField(
+                      controller: _doctorNameController,
+                      enabled: false,
+                      hintText: "Doctor Name",
+                      hintTextColor: Colors.black.withOpacity(0.8),
+                      filled: true,
+                      fillColor: ColorsForApp.backgroundTextField,
+                      contentPadding: EdgeInsets.only(left: 18)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 19),
+                  child: CustomTextField(
+                      controller: _adharNumberController,
+                      hintText: "Aadhaar Number",
+                      keyboardType: TextInputType.phone,
+                      // inputFormatters: [
+                      //   LengthLimitingTextInputFormatter(12),
+                      //   FilteringTextInputFormatter.digitsOnly
+                      // ],
+                      hintTextColor: Colors.black.withOpacity(0.8),
+                      filled: true,
+                      fillColor: ColorsForApp.backgroundTextField,
+                      contentPadding: EdgeInsets.only(left: 18),
+                      validator: (value) {
+                        setState(() {
+                          adharNumberError = !isValidAadharNumber(value!)
+                              ? 'Invalid Aadhar number format'
+                              : null;
+                        });
+                      },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 19),
+                  child: CustomTextField(
+                      controller: _abhaNumberController,
+                      hintText: "Abha Number",
+                      errorText: adharNumberError,
+                      hintTextColor: Colors.black.withOpacity(0.8),
+                      filled: true,
+                      fillColor: ColorsForApp.backgroundTextField,
+                      contentPadding: EdgeInsets.only(left: 18),
+                      validator:  (value) {
+                        setState(() {
+                          abhaNumberError = !isValidAbhaNumber(value!)
+                              ? 'Invalid Abha number format'
+                              : null;
+                        });
+                      },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 19),
+                  child: CustomTextField(
+                    controller: _addressController,
+                    hintText: "Insurance",
+                    hintTextColor: Colors.black.withOpacity(0.8),
+                    filled: true,
+                    fillColor: ColorsForApp.backgroundTextField,
+                    contentPadding: EdgeInsets.only(left: 18),
+                    validator: (value){
+                      if(value!.isEmpty)
+                      {
+                        return "Please Enter Confirmation";
+                      }
+                    },
+                    suffixIcon: DropdownButton<String>(
+                        value: _insuranceController.text.isNotEmpty &&
+                            ['Select', 'YES', 'NO']
+                                .contains(_insuranceController.text)
+                            ? _insuranceController.text
+                            : 'Select',
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _insuranceController.text = newValue!;
+                          });
+                        },
+                      items: <String>['Select', 'YES', 'NO']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 19),
+                  child: CommonButton(onpressed: (){
+                    _addPatient();
+                  },),
+                )
+              ],
+            ),
+          ),
+        )
+        );
   }
 
   bool isValidEmail(String email) {
@@ -628,7 +595,28 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
     } else {
       return true;
     }
-    // Your email validation logic, return true if valid, false otherwise
+  }
+
+  bool isValidPassword(String password) {
+    RegExp passwordRegex = RegExp(
+        r'^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}$');
+    if (!passwordRegex.hasMatch(_passwordController.text) ||
+        !_passwordController.text.isNotEmpty) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+
+  bool isValidPhoneNumber(String phoneNumber) {
+    RegExp phoneRegex = RegExp(r'^[0-9]{10}$');
+    if (!phoneRegex.hasMatch(_phoneNumberController.text) ||
+        !_phoneNumberController.text.isNotEmpty) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
   bool isValidAadharNumber(String aadharNumber) {
@@ -642,28 +630,6 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
     // Your email validation logic, return true if valid, false otherwise
   }
 
-  bool isValidPassword(String password) {
-    RegExp passwordRegex = RegExp(
-        r'^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}$');
-    if (!passwordRegex.hasMatch(_passwordController.text) ||
-        !_passwordController.text.isNotEmpty) {
-      return false;
-    } else {
-      return true;
-    }
-    // Your password validation logic, return true if valid, false otherwise
-  }
-
-  bool isValidPhoneNumber(String phoneNumber) {
-    RegExp phoneRegex = RegExp(r'^[0-9]{10}$');
-    if (!phoneRegex.hasMatch(_phoneNumberController.text) ||
-        !_phoneNumberController.text.isNotEmpty) {
-      return false;
-    } else {
-      return true;
-    }
-  }
-
   bool isCityNotEmpty(String city) {
     if (!_cityController.text.isNotEmpty) {
       return false;
@@ -672,13 +638,18 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
     }
   }
 
+  bool isValidAbhaNumber(String abhaNumber) {
+    RegExp abhaRegex = RegExp(r'^[0-9]{14}$');
+    return abhaRegex.hasMatch(abhaNumber);
+  }
+
   void _addPatient() async {
     if (_nameController.text.isEmpty ||
         _ageController.text.isEmpty ||
         _phoneNumberController.text.isEmpty ||
         _addressController.text.isEmpty ||
         _cityController.text.isEmpty ||
-        _sexController.text.isEmpty ||
+        _genderController.text.isEmpty ||
         _birthdateController.text.isEmpty ||
         _adharNumberController.text.isEmpty) {
       showDialog(
@@ -720,7 +691,7 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
       'village':
       _villageController.text.isNotEmpty ? _villageController.text : null,
       'city': _cityController.text.isNotEmpty ? _cityController.text : null,
-      'sex': _sexController.text,
+      'sex': _genderController.text,
       'bloodGroup': _bloodGroupController.text.isNotEmpty
           ? _bloodGroupController.text
           : null,
@@ -748,12 +719,12 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
     print(patient);
 
 // Call function to send data to server
-    PatientRegistrationScreen.syncDataWithServer();
+    RegisterPatientScreen.syncDataWithServer();
     showDialog(
       context: context,
       builder: (BuildContext context) {
         Future.delayed(Duration(seconds: 2), () {
-          Navigator.of(context).pop(true); // Close the dialog after 2 seconds
+          Navigator.of(context).pop(true);
         });
         return AlertDialog(
           backgroundColor: Color(0xffBFF6F7),
@@ -762,11 +733,7 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //       builder: (context) =>HomeScreenDoctor()),
-                // );
+
               },
               child: Text('OK'),
             ),
@@ -780,7 +747,7 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
     _emailController.clear();
     _addressController.clear();
     _phoneNumberController.clear();
-    _sexController.clear();
+    _genderController.clear();
     _bloodGroupController.clear();
     _birthdateController.clear();
     _adharNumberController.clear();
@@ -791,4 +758,5 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
     _villageController.clear();
     _passwordController.clear();
   }
+
 }
