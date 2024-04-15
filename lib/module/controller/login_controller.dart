@@ -3,11 +3,15 @@ import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
 
 class LoginController extends GetxController {
 
   RxBool passwordObsecured = false.obs;
 
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController userEmailController = TextEditingController();
+  String errorMessage = '';
 
   //*********************************************************************//
 
@@ -27,7 +31,6 @@ class LoginController extends GetxController {
       print(response.body);
       if (response.statusCode == 200) {
         print("test2");
-        // Successful registration, you can handle the response data here
         final Map<String, dynamic> responseData = jsonDecode(response.body);
         return responseData;
       } else {

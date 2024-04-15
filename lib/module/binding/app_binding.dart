@@ -19,7 +19,7 @@ class AppBinding extends Bindings
 {
   @override
   void dependencies() {
-    Get.lazyPut(() => SpashController());
+    Get.lazyPut(() => SplashController());
     Get.lazyPut(() => AddPatientController());
     Get.lazyPut(() => AddPrescriptionControllerOne());
     Get.lazyPut(() => AddPrescriptionControllerTwo());

@@ -1,19 +1,21 @@
-import 'dart:math';
+import 'dart:convert';
 
+import 'package:final_bwf/module/screen/splash_screen.dart';
+import 'package:final_bwf/module/widgets/common_button.dart';
+import 'package:final_bwf/module/widgets/constant_widgets.dart';
+import 'package:final_bwf/module/widgets/text_fields.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 import '../controller/login_controller.dart';
 import '../utils/app_colors.dart';
-import '../utils/text_style.dart';
-import '../widgets/common_button.dart';
-import '../widgets/text_fields.dart';
 import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -21,192 +23,192 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
 
+  final _formSignInKey = GlobalKey<FormState>();
+
   LoginController loginController = Get.find();
-
-  TextEditingController passwordController = TextEditingController();
-  TextEditingController userEmailController = TextEditingController();
-
-  String errorMessage = '';
-
-
-  final GlobalKey<FormState> loginKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body:Column(
-          children: [
-            SizedBox(height: 8.80.h,),
-            Padding(
-              padding: EdgeInsets.symmetric( horizontal: 6.w),
-              child: Column(
-                children: [
-                  Form(
-                    key: loginKey,
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Login Here",
-                                  style: TextHelper.size20.copyWith(fontSize: 28, fontWeight: FontWeight.w600, color:Color(0xff7E7E7E)),
+      body:  Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Column(
+            children: [
+              Padding(
+                padding:EdgeInsets.symmetric(vertical: 17.sp,horizontal: 17.sp),
+                child: Column(
+                  children: [
+                    Form(
+                      key: _formSignInKey,
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Login Here !!',
+                                    style: TextStyle(
+                                      fontSize: 18.0.sp,
+                                      fontWeight: FontWeight.w800,
+                                      color:ColorsForApp.textColor2,
+                                    ),
+                                  ),
+                                  SizedBox(height: 1.h,),
+                                  Text(
+                                    'Welcome Back You Have Been Missed.',
+                                    style: TextStyle(
+                                      fontSize: 11.0.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color:ColorsForApp.textColor2,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 1.h,),
+                          Container(
+                            height: 20.h,
+                            width: 33.w,
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image: AssetImage("assets/images/AppLogo.png"))
+                            ),
+                          ),
+                            SizedBox(
+                            height: 1.0.h,
+                          ),
+                          Padding(
+                            padding:  EdgeInsets.only(top: 5.sp),
+                            child: CustomTextField(
+                              controller:loginController.userEmailController,
+                              hintText: 'Enter Your Email',
+                              hintTextColor: Colors.black.withOpacity(0.8),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your mail';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                           Padding(
+                            padding:  EdgeInsets.only(top: 30.sp),
+                            child: CustomTextField(
+                              controller: loginController.passwordController,
+                              hintText: 'Enter Your Password',
+                              hintTextColor: Colors.black.withOpacity(0.8),
+                              obscureText: loginController.passwordObsecured.value,
+                              suffixIcon: GestureDetector(
+                                onTap: (){
+                                  setState(() {
+                                    loginController.passwordObsecured.value =! loginController.passwordObsecured.value;
+                                  });
+                                },
+                                  child: loginController.passwordObsecured.value ?Icon(Icons.remove_red_eye,color: Colors.black,): Icon(Icons.visibility_off,color: Colors.black,)),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your password';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                           SizedBox(
+                            height: 1.5.h,
+                          ),
+                           Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              GestureDetector(
+                                child: Text(
+                                  'Forget password?',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 11.sp
+                                  ),
                                 ),
-                                Text("Welcome back you’ve been missed",
-                                  style: TextHelper.size20.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color:Color(0xff7E7E7E)),
-                                )
-                              ],
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 5.0.h,),
-                        Container(
-                          height: 10.h,
-                          width: 27.w,
-                         decoration: BoxDecoration(
-                           image: DecorationImage(
-                               image:AssetImage("assets/images/BWFLogo.png",),fit:BoxFit.cover)
-                         ),
-                        ),
-                        SizedBox(height: 4.h),
-
-                        // const Row(
-                        //   children: [
-                        //     Text("Username",
-                        //         style: TextStyle(fontWeight: FontWeight.w600)),
-                        //   ],
-                        // ),
-
-                        Padding(
-                          padding: EdgeInsets.only(top: 1.h),
-                          child: CustomTextField(
-                            controller:userEmailController,
-                            prefixIcon: Icon(Icons.person),
-                            hintText: "Type Your Username",
-                            hintTextColor: Colors.black.withOpacity(0.6),
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return "Please Enter Username";
-                              }
-                              return null;
-                            }, hintTextstyle: TextStyle(),
-                          ),
-                        ),
-                        SizedBox(height: 5.h),
-
-                        // Row(
-                        //   children: [
-                        //     Text("Password", style: TextStyle(fontWeight: FontWeight.w600)),
-                        //   ],
-                        // ),
-
-                        Padding(
-                          padding: EdgeInsets.only(top: 1.h),
-                          child: CustomTextField(
-                            controller: passwordController,
-                            prefixIcon: Icon(Icons.lock_outline_sharp),
-                            hintText: "Type Your password",
-                            hintTextColor: Colors.black.withOpacity(0.6),
-                            suffixIcon: IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  loginController.passwordObsecured.value =! loginController.passwordObsecured.value;
-                                });
-                              },
-                              icon: Icon(
-                                loginController.passwordObsecured.value
-                                    ? Icons.visibility_off
-                                    : Icons.visibility,
                               ),
-                            ),
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return "Please Enter Password";
-                              }
-                              return null;
-                            }, hintTextstyle: TextStyle(),
+                            ],
                           ),
-                        ),
-                        SizedBox(height: 1.h),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            GestureDetector(
-                              child: Text(
-                                "Forgot password",
-                                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12.sp),
-                              ),
-                              onTap: () {
-                                Navigator.pushNamed(context, "forget_screen");
-                              },
-                            )
-                          ],
-                        ),
-                      ],
+                          Padding(
+                            padding:  EdgeInsets.only(top: 18.sp),
+                            child: CommonButton(
+                                buttonText: "Login",
+                                onpressed: () async {
+                                  if(_formSignInKey.currentState!.validate())
+                                    {
+                                      try {
+                                        final Map<String, dynamic> responseData =
+                                        await loginController.signIn(
+                                          loginController.userEmailController.text,
+                                          loginController.passwordController.text,
+                                        );
+                                        print(responseData);
+                                        if (responseData['status'] == true) {
+                                          var sharedPref =
+                                          await SharedPreferences.getInstance();
+                                          sharedPref.setBool(
+                                              SplashScreenState.KEYLOGIN, true);
+                                          sharedPref.setString(
+                                              'response_data', jsonEncode(responseData));
+                                          print('Login successful: $responseData');
+                                          // Credentials are valid
+                                          print('Login successful: $responseData');
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => HomeScreen(
+                                                  email: responseData["data"]["email"],
+                                                  name: responseData["data"]['name'] ??
+                                                      'Unknown',
+                                                  doctor_id: responseData["data"]
+                                                  ["doctorID"],
+                                                )),
+                                          );
+                                        } else {
+                                          setState(() {
+                                            // Clear any previous error message
+                                            loginController.errorMessage =
+                                            'Invalid credentials. Please try again.';
+                                          });
+                                          // Credentials are invalid
+                                          print(
+                                              "Server message: ${responseData['message']}");
+                                        }
+                                      }
+                                      catch (error) {
+                                        // Handle registration error (e.g., show an error message)
+                                        print('Error during login: $error');
+                                      }
+                                    }
+
+                                  },
+                            ),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            SizedBox(height: 5.h,),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 14.sp),
-              child: CommonButton(
-                buttonText: "Sign in",
-                onpressed: () async {
-                    try {
-                      final Map<String, dynamic> responseData =
-                          await loginController.signIn(
-                        userEmailController.text,
-                        passwordController.text,
-                      );
-                      print(responseData);
-                      if (responseData['status'] == true) {
-                        // Credentials are valid
-                        print('Login successful: $responseData');
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => HomeScreen(
-                                email: responseData["data"]["email"],
-                                name: responseData["data"]['name'] ??
-                                    'Unknown',
-                                doctor_id: responseData["data"]
-                                ["doctorID"],
-                              )),
-                        );
-                      } else {
-                        setState(() {
-                          // Clear any previous error message
-                          errorMessage =
-                          'Invalid credentials. Please try again.';
-                        });
-                        // Credentials are invalid
-                        print(
-                            "Server message: ${responseData['message']}");
-                      }
-                    } catch (error) {
-                      // Handle registration error (e.g., show an error message)
-                      print('Error during login: $error');
-                    }
-                  },
-              ),
-              ),
-            Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Image.asset("assets/images/LoginScreenDesign.png", height: 38.95.h, width: 100.w, fit: BoxFit.fill),
-                ],
-              ),
-            ),
             ],
-
-        ),
+          ),
+          Container(
+            height: 30.h,
+            width: 100.w,
+            // color: Colors.pink,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage("assets/images/LoginScreenDesign.png"),fit: BoxFit.cover)
+            ),
+          )
+        ],
+      ),
     );
   }
 }

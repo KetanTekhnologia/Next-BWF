@@ -15,5 +15,5 @@ class AppRouts
   static String UPDATE_PATIENT_ROUTE = "/update_patient_route";
   static String VIEW_VITALS_ROUTE = "/view_vitals_route";
   static String REGISTERATION_PATIENT_ROUTE = "/registeration_patient_route";
-  static String ADD_VITAL_TWO_ROUTE = "/add_vital_two_route";
+  static String ADD_VITAL_ROUTE = "/add_vital_route";
 }
